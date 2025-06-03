@@ -1,16 +1,17 @@
+import re
+import os 
 import cv2
 import base64
 import requests
 from faceDetectionSeq import processFaces
 from eventDescription import relativeDescription
-import re
-import os 
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     from dotenv import load_dotenv
     load_dotenv(dotenv_path)
 
-VIDEO_PATH = "testingVideo/walking.mp4"
+VIDEO_PATH = "testingVideo/videoplayback.mp4"
 CHUNK_DURATION = 8 
 FRAME_SAMPLE_RATE = 3  
 FPS = 20
@@ -26,8 +27,8 @@ def encode_image_to_base64(image_path):
         return f"data:image/jpeg;base64,{img_b64}"
 
 
-img1 = encode_image_to_base64("Sample Images\sample1.jpg")
-img2 = encode_image_to_base64("Sample Images\sample2.jpg")
+img1 = encode_image_to_base64("Sample Images/sample1.jpg")
+img2 = encode_image_to_base64("Sample Images/sample2.jpg")
 
 def get_gemini_response(image_b64_list):
     """
@@ -35,7 +36,7 @@ def get_gemini_response(image_b64_list):
     with enhanced prompting and reasoning capability.
     """
 
-    few_shot_messages = [
+    one_shot_messages = [
         {
             "role": "user",
             "content": [
@@ -72,8 +73,8 @@ def get_gemini_response(image_b64_list):
             "image_url": {"url": f"data:image/jpeg;base64,{img_b64}"}
         })
 
-    # Combine few-shot with main input
-    messages = few_shot_messages + [user_message]
+    # Combine one-shot with main input
+    messages = one_shot_messages + [user_message]
 
     headers = {
         "Authorization": f"Bearer {GEMINI_API_KEY}",
@@ -195,7 +196,7 @@ def process_video(video_path):
 
     cap.release()
     cv2.destroyAllWindows()
-    print("✅ Video processing complete.")
+    print("Video processing complete.")
 
 if __name__ == "__main__":
     process_video(VIDEO_PATH)

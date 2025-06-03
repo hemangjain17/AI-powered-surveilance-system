@@ -1,24 +1,14 @@
-import cv2
 import os
 import base64
 import requests
-from PIL import Image 
-from ultralytics import YOLO
-# Config
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     from dotenv import load_dotenv
     load_dotenv(dotenv_path)
 
-
-VIDEO_PATH = "videoplayback (1).mp4"
-CHUNK_DURATION = 10 
-FRAME_SAMPLE_RATE = 2  
-FPS = 20
-
 GEMINI_MODEL = "google/gemini-2.0-flash-001"
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-HARMFUL_KEYWORDS = ["fight", "violence", "attack", "slap", "punch", "abuse", "harm", "injury", "danger", "threat", "assault", "aggression", "hostile", "disturbance", "altercation"]
 
 def encode_image_to_base64(image_path):
     with open(image_path, "rb") as img_file:
@@ -27,8 +17,8 @@ def encode_image_to_base64(image_path):
         return f"data:image/jpeg;base64,{img_b64}"
 
 # Example usage
-img1 = encode_image_to_base64("Sample Images\sample6.jpg")
-img2 = encode_image_to_base64("Sample Images\sample2.jpg")
+img2 = encode_image_to_base64(r"Sample Images\sample2.jpg")
+img1 = encode_image_to_base64(r"Sample Images\sample6.jpg")
 
 def relativeDescription(b64_frames, faces, frame_size, general_summary=""):
     width, height = frame_size
@@ -98,7 +88,7 @@ def relativeDescription(b64_frames, faces, frame_size, general_summary=""):
         "Use the image + text context to generate an accurate response.\n\n"
         "Respond in this format:\n"
         "Event Summary: <short summary>\n"
-        "Details: <who is where and what they're doing>\n"
+        "Details: < what they're doing ( namewise ) and need not mention the direction >\n"
     )
 
     system_message = {
